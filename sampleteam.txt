@@ -1,0 +1,58 @@
+Suicune @ Leftovers  
+Ability: Pressure  
+EVs: 252 HP / 40 Def / 216 Spe  
+Timid Nature  
+IVs: 0 Atk  
+- Scald  
+- Substitute  
+- Protect  
+- Calm Mind  
+
+Weezing-Galar @ Rocky Helmet  
+Ability: Levitate  
+EVs: 252 HP / 252 Def / 4 Spe  
+Bold Nature  
+IVs: 0 Atk  
+- Sludge Bomb  
+- Pain Split  
+- Will-O-Wisp  
+- Defog  
+
+Metagross @ Leftovers  
+Ability: Clear Body  
+EVs: 252 HP / 248 SpD / 8 Spe  
+Careful Nature  
+- Meteor Mash  
+- Body Press  
+- Cosmic Power  
+- Rest  
+
+Umbreon @ Leftovers  
+Ability: Synchronize  
+EVs: 252 HP / 4 Def / 252 SpD  
+Calm Nature  
+IVs: 0 Atk  
+- Wish  
+- Protect  
+- Foul Play  
+- Heal Bell  
+
+Nidoqueen (F) @ Black Sludge  
+Ability: Sheer Force  
+EVs: 252 HP / 32 SpA / 224 SpD  
+Calm Nature  
+IVs: 0 Atk  
+- Stealth Rock  
+- Toxic  
+- Earth Power  
+- Ice Beam  
+
+Togekiss @ Choice Scarf  
+Ability: Serene Grace  
+EVs: 80 HP / 44 Def / 132 SpA / 252 Spe  
+Timid Nature  
+IVs: 0 Atk  
+- Air Slash  
+- Flamethrower  
+- Trick  
+- Roost  

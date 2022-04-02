@@ -1,0 +1,9 @@
+['Suicune @ Leftovers  \n',
+ 'Ability: Pressure  \n',
+ 'EVs: 252 HP / 40 Def / 216 Spe  \n',
+ 'Timid Nature  \n',
+ 'IVs: 0 Atk  \n',
+ '- Scald  \n',
+ '- Substitute  \n',
+ '- Protect  \n',
+ '- Calm Mind  \n']
