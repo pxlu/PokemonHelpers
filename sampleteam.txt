@@ -1,6 +1,5 @@
 Sharpedo (F) @ Life Orb  
 Ability: Speed Boost  
-Level: 73  
 Shiny: Yes  
 EVs: 252 Atk / 4 SpD / 252 Spe  
 Adamant Nature  
