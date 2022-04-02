@@ -2,7 +2,7 @@
  'Ability: Pressure  \n',
  'EVs: 252 HP / 40 Def / 216 Spe  \n',
  'Timid Nature  \n',
- 'IVs: 0 Atk  \n',
+ 'IVs: 0 Atk / 19 Def / 24 SpA  \n',
  '- Scald  \n',
  '- Substitute  \n',
  '- Protect  \n',
