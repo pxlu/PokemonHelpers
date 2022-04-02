@@ -1,9 +1,9 @@
-['Suicune @ Leftovers  \n',
- 'Ability: Pressure  \n',
- 'EVs: 252 HP / 40 Def / 216 Spe  \n',
- 'Timid Nature  \n',
- 'IVs: 0 Atk / 19 Def / 24 SpA  \n',
- '- Scald  \n',
- '- Substitute  \n',
- '- Protect  \n',
- '- Calm Mind  \n']
+['Togekiss @ Choice Scarf',
+ 'Ability: Serene Grace',
+ 'EVs: 80 HP / 44 Def / 132 SpA / 252 Spe',
+ 'Timid Nature',
+ 'IVs: 0 Atk',
+ '- Air Slash',
+ '- Flamethrower',
+ '- Trick',
+ '- Roost']
