@@ -7,20 +7,28 @@ import itertools
 import re
 import pprint
 
+# 1: +10%, -1: -10%
+NATURES_TABLE = {
+  'hardy': None,
+  'lonely': {'atk': 1, 'def': -1},
+  'brave': {'atk': 1, 'spe': -1},
+  'adamant': {'atk': 1, 'spa': -1}
+}
+
 class Pokemon:
   def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None):
     self.name = name
-    self.item = item,
+    self.item = item
     self.ability = ability
     self.evs = evs
     self.ivs = ivs
     self.stats = stats
-    self.level = level
+    self.level = 100 if not level else level
     self.nature = nature
     self.moveset = moveset
 
   def __str__(self):
-    level_string = 'Level: ' + self.level + '\n' if self.level else ''
+    level_string = 'Level: ' + str(self.level) + '\n' if self.level else ''
     ev_string = 'EVs: ' 
     for ev_stat in self.evs.keys():
       ev_number = self.evs[ev_stat]
@@ -46,9 +54,22 @@ class Pokemon:
 class Team:
   def __init__(self, roster=None):
     self.roster = roster
+    
+def dex_lookup(dex, pokemon_name):
+  return dex[pokemon_name.lower()]
 
-def calculate_pkmn_stats(pokemon):
-  pass
+def pokemon_nature_calculation(nature, stat):
+  return 1
+
+def normal_stat_formula(dex_data, pokemon_data, stat, nature):
+  # (((IV + 2 * BaseStat + (EV/4) ) * Level/100 ) + 5) * Nature Value
+  return (((pokemon_data.ivs[stat] + 2 * dex_data['baseStats'][stat] + pokemon_data.evs[stat]/4) * pokemon_data.level/100) + 5) * pokemon_nature_calculation(pokemon_data.nature)
+
+def calculate_pkmn_stats(dex_data, pokemon):
+  hp_formula = ((pokemon.ivs['HP'] + 2 * dex_data['baseStats']['hp'] + (pokemon.evs['HP']/4)) * pokemon.level/100) + 10 + pokemon.level
+  return {
+    'hp': hp_formula
+  }
 
 def convert_pokemondata_into_pkmn(pokemondata):
 
@@ -60,7 +81,7 @@ def convert_pokemondata_into_pkmn(pokemondata):
   moveset_pattern = re.compile('- .+')
 
   pkmn_name, pkmn_item, pkmn_ability, pkmn_nature, pkmn_level = None, None, None, None, None 
-  pkmn_evs, pkmn_ivs = {'HP': 0, 'Atk': 0, 'Def': 0, 'SpA': 0, 'SpD': 0, 'Spe': 0}, {'HP': 31, 'Atk': 31, 'Def': 31, 'SpA': 31, 'SpD': 31, 'Spe': 31}
+  pkmn_evs, pkmn_ivs = {'hp': 0, 'atk': 0, 'def': 0, 'spa': 0, 'spd': 0, 'spe': 0}, {'hp': 31, 'atk': 31, 'def': 31, 'spa': 31, 'spd': 31, 'spe': 31}
   pkmn_moveset = []
 
   for pattern in pokemondata:
@@ -70,7 +91,7 @@ def convert_pokemondata_into_pkmn(pokemondata):
     moveset_pattern_match = moveset_pattern.match(pattern)
 
     if name_item_match:
-      pkmn_name, pkmn_item = name_item_match.group(0).split('@')[0].strip(), name_item_match.group(0).split('@')[-1].strip()
+      pkmn_name, pkmn_item = name_item_match.group(0).split('@')[0].strip().split(' ')[0].strip(), name_item_match.group(0).split('@')[-1].strip()
     if ability_pattern_match:
       pkmn_ability = ability_pattern_match.group(0).split(':')[1].strip()
     if nature_pattern_match:
@@ -116,5 +137,9 @@ if __name__ == '__main__':
 
   new_team = Team(roster=pkmn_list)
   print(new_team.roster[0])
+  res = dex_lookup(data, new_team.roster[0].name)
+  hp = calculate_pkmn_stats(res, new_team.roster[0])
+  print(hp)
+  
 
   dex.close()
