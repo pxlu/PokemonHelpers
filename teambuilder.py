@@ -12,7 +12,28 @@ NATURES_TABLE = {
   'hardy': None,
   'lonely': {'atk': 1, 'def': -1},
   'brave': {'atk': 1, 'spe': -1},
-  'adamant': {'atk': 1, 'spa': -1}
+  'adamant': {'atk': 1, 'spa': -1},
+  'naughty': {'atk': 1, 'spd': -1},
+  'bold': {'def': 1, 'atk': -1}
+  'docile': None,
+  'impish': {'def': 1, 'spa': -1}
+  'lax': {'def': 1, 'spd': -1},
+  'relaxed': {'def': 1, 'spd': -1},
+  'modest': {'atk': -1, 'spa': 1},
+  'mild': {'def': -1, 'spa': 1},
+  'bashful': None,
+  'rash': {'spa': 1, 'spd': -1},
+  'quiet': {'spa': 1, 'spe': -1},
+  'calm': {'atk': -1, 'spd': 1},
+  'gentle': {'def': -1, 'spd': 1},
+  'careful': {'spa': -1, 'spd': 1},
+  'quirky': None,
+  'sassy': {'spd': 1, 'spe': -1},
+  'timid': {'atk': 1, 'spe': 1},
+  'hasty': {'def': -1, 'spe': 1},
+  'jolly': {'spa': -1, 'spe': 1},
+  'naive': {'spd': -1, 'spe': 1},
+  'serious': None
 }
 
 class Pokemon:
