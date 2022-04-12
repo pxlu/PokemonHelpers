@@ -66,9 +66,12 @@ class PkmnType:
     self.defense = defense
     self.offense = offense
 
+PKMN_TYPES = {
+  pkmn_type_name.upper(): PkmnType(name=pkmn_type_name, defense=pkmn_type_details['defense'], offense=pkmn_type_details['offense'])for (pkmn_type_name, pkmn_type_details) in TYPES_TABLE.items()
+}
 
 class Pokemon:
-  def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None):
+  def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None, dex_data=None):
     self.name = name
     self.item = item
     self.ability = ability
@@ -78,6 +81,7 @@ class Pokemon:
     self.level = 100 if not level else level
     self.nature = nature
     self.moveset = moveset
+    self.dex_data = dex_data
 
   def __str__(self):
     level_string = 'Level: ' + str(self.level) + '\n' if self.level else ''
@@ -108,8 +112,17 @@ class Team:
     self.roster = roster
 
   def _calculate_defensive_coverage(self):
-    pass
-   
+    roster_types = {}
+    for pkmn in self.roster:
+      for pkmn_type in pkmn.dex_data['types']:
+        if pkmn_type not in roster_types.keys():
+          roster_types[pkmn_type.lower()] = 1
+        else:
+          roster_types[pkmn_type.lower()] += 1
+
+    print(roster_types)
+    return roster_types
+
 def dex_lookup(dex, pokemon_name):
   return dex[pokemon_name.lower()]
 
@@ -122,21 +135,21 @@ def pokemon_nature_calculation(nature, stat):
   else:
     return 1
 
-def normal_stat_formula(dex_data, pokemon_data, stat, nature):
+def normal_stat_formula(pokemon_data, stat, nature):
   # (((IV + 2 * BaseStat + (EV/4) ) * Level/100 ) + 5) * Nature Value
-  inner_stat_value = (2 * dex_data['baseStats'][stat]) + pokemon_data.ivs[stat] + (pokemon_data.evs[stat] / 4)
+  inner_stat_value = (2 * pokemon_data.dex_data['baseStats'][stat]) + pokemon_data.ivs[stat] + (pokemon_data.evs[stat] / 4)
   return math.floor((inner_stat_value * pokemon_data.level / 100 + 5) * pokemon_nature_calculation(nature, stat))
 
-def calculate_pkmn_stats(dex_data, pokemon):
-  hp_formula_calculation = ((pokemon.ivs['hp'] + 2 * dex_data['baseStats']['hp'] + (pokemon.evs['hp']/4)) * pokemon.level/100) + 10 + pokemon.level
+def calculate_pkmn_stats(pokemon):
+  hp_formula_calculation = ((pokemon.ivs['hp'] + 2 * pokemon.dex_data['baseStats']['hp'] + (pokemon.evs['hp']/4)) * pokemon.level/100) + 10 + pokemon.level
 
   pokemon.stats = {
     'hp': hp_formula_calculation,
-    'atk': normal_stat_formula(dex_data, pokemon, 'atk', pokemon.nature),
-    'def': normal_stat_formula(dex_data, pokemon, 'def', pokemon.nature),
-    'spa': normal_stat_formula(dex_data, pokemon, 'spa', pokemon.nature),
-    'spd': normal_stat_formula(dex_data, pokemon, 'spd', pokemon.nature),
-    'spe': normal_stat_formula(dex_data, pokemon, 'spe', pokemon.nature),
+    'atk': normal_stat_formula(pokemon, 'atk', pokemon.nature),
+    'def': normal_stat_formula(pokemon, 'def', pokemon.nature),
+    'spa': normal_stat_formula(pokemon, 'spa', pokemon.nature),
+    'spd': normal_stat_formula(pokemon, 'spd', pokemon.nature),
+    'spe': normal_stat_formula(pokemon, 'spe', pokemon.nature),
   }
 
   return pokemon
@@ -144,7 +157,7 @@ def calculate_pkmn_stats(dex_data, pokemon):
 def normalize_pokemon_name(pokemon_name):
   return ''.join(pokemon_name.lower().split('-'))
 
-def convert_pokemondata_into_pkmn(pokemondata):
+def convert_pokemondata_into_pkmn(pokemondata, dex):
 
   pokemondata = [x.strip() for x in pokemondata]
   name_item_pattern = re.compile('.+ @ .+')
@@ -190,7 +203,8 @@ def convert_pokemondata_into_pkmn(pokemondata):
     ivs = pkmn_ivs,
     level = pkmn_level,
     nature = pkmn_nature,
-    moveset = pkmn_moveset
+    moveset = pkmn_moveset,
+    dex_data = dex_lookup(dex, normalize_pokemon_name(pkmn_name))
   )
 
 if __name__ == '__main__':
@@ -205,17 +219,17 @@ if __name__ == '__main__':
   
   pkmn_list = []
   for pokemon in list_of_pokemon_data:
-    pkmn = convert_pokemondata_into_pkmn(pokemon)
+    pkmn = convert_pokemondata_into_pkmn(pokemon, data)
     pkmn_list.append(pkmn)
 
   new_team = Team(roster=pkmn_list)
   for pkmn in new_team.roster:
-    dex_res = dex_lookup(data, normalize_pokemon_name(pkmn.name))
-    pkmn = calculate_pkmn_stats(dex_res, pkmn)
+    pkmn = calculate_pkmn_stats(pkmn)
   
   for pkmn in new_team.roster:
     print(pkmn.stats)
 
-  pprint.pprint(TYPES_TABLE['steel']['defense'])
+  print(PKMN_TYPES['NORMAL'].defense)
+  new_team._calculate_defensive_coverage()
 
   dex.close()
