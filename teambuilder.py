@@ -6,6 +6,7 @@ import json
 import itertools
 import re
 import pprint
+import math
 
 # 1: +10%, -1: -10%
 NATURES_TABLE = {
@@ -14,9 +15,9 @@ NATURES_TABLE = {
   'brave': {'atk': 1, 'spe': -1},
   'adamant': {'atk': 1, 'spa': -1},
   'naughty': {'atk': 1, 'spd': -1},
-  'bold': {'def': 1, 'atk': -1}
+  'bold': {'def': 1, 'atk': -1},
   'docile': None,
-  'impish': {'def': 1, 'spa': -1}
+  'impish': {'def': 1, 'spa': -1},
   'lax': {'def': 1, 'spd': -1},
   'relaxed': {'def': 1, 'spd': -1},
   'modest': {'atk': -1, 'spa': 1},
@@ -63,7 +64,7 @@ class Pokemon:
         if iv_string == '':
           iv_string = 'IVs: '
         iv_string += str(v) + ' ' + k + ' / ' 
-    if iv_string.strip()[-1] == '/':
+    if iv_string and iv_string.strip()[-1] == '/':
       iv_string = iv_string[:-2]
     moveset_string = ''
     for move in self.moveset:
@@ -80,17 +81,32 @@ def dex_lookup(dex, pokemon_name):
   return dex[pokemon_name.lower()]
 
 def pokemon_nature_calculation(nature, stat):
-  return 1
+  if stat.lower() in NATURES_TABLE[nature.lower()]:
+    if NATURES_TABLE[nature.lower()][stat.lower()] > 0:
+      return 1.1
+    else:
+      return 0.9
+  else:
+    return 1
 
 def normal_stat_formula(dex_data, pokemon_data, stat, nature):
   # (((IV + 2 * BaseStat + (EV/4) ) * Level/100 ) + 5) * Nature Value
-  return (((pokemon_data.ivs[stat] + 2 * dex_data['baseStats'][stat] + pokemon_data.evs[stat]/4) * pokemon_data.level/100) + 5) * pokemon_nature_calculation(pokemon_data.nature)
+  inner_stat_value = (2 * dex_data['baseStats'][stat]) + pokemon_data.ivs[stat] + (pokemon_data.evs[stat] / 4)
+  return math.floor((inner_stat_value * pokemon_data.level / 100 + 5) * pokemon_nature_calculation(nature, stat))
 
 def calculate_pkmn_stats(dex_data, pokemon):
-  hp_formula = ((pokemon.ivs['HP'] + 2 * dex_data['baseStats']['hp'] + (pokemon.evs['HP']/4)) * pokemon.level/100) + 10 + pokemon.level
-  return {
-    'hp': hp_formula
+  hp_formula_calculation = ((pokemon.ivs['hp'] + 2 * dex_data['baseStats']['hp'] + (pokemon.evs['hp']/4)) * pokemon.level/100) + 10 + pokemon.level
+
+  pokemon.stats = {
+    'hp': hp_formula_calculation,
+    'atk': normal_stat_formula(dex_data, pokemon, 'atk', pokemon.nature),
+    'def': normal_stat_formula(dex_data, pokemon, 'def', pokemon.nature),
+    'spa': normal_stat_formula(dex_data, pokemon, 'spa', pokemon.nature),
+    'spd': normal_stat_formula(dex_data, pokemon, 'spd', pokemon.nature),
+    'spe': normal_stat_formula(dex_data, pokemon, 'spe', pokemon.nature),
   }
+
+  return pokemon
 
 def convert_pokemondata_into_pkmn(pokemondata):
 
@@ -120,7 +136,7 @@ def convert_pokemondata_into_pkmn(pokemondata):
     if evs_pattern_match:
       pkmn_evs_data = [x.strip() for x in evs_pattern_match.group(0).split(':')[-1].split('/')]
       for ev_pair in pkmn_evs_data:
-        pkmn_evs[ev_pair.split(' ')[-1]] = int(ev_pair.split(' ')[0])
+        pkmn_evs[ev_pair.split(' ')[-1].lower()] = int(ev_pair.split(' ')[0])
     if ivs_pattern_match:
       pkmn_ivs_data = [x.strip() for x in ivs_pattern_match.group(0).split(':')[-1].strip().split('/')]
       for iv_pair in pkmn_ivs_data:
@@ -157,10 +173,8 @@ if __name__ == '__main__':
     pkmn_list.append(pkmn)
 
   new_team = Team(roster=pkmn_list)
-  print(new_team.roster[0])
   res = dex_lookup(data, new_team.roster[0].name)
-  hp = calculate_pkmn_stats(res, new_team.roster[0])
-  print(hp)
-  
+  pkmn = calculate_pkmn_stats(res, new_team.roster[0])
+  print(pkmn.stats)
 
   dex.close()
