@@ -37,6 +37,36 @@ NATURES_TABLE = {
   'serious': None
 }
 
+# 0 on defense means immune to, 0 on offensive means cannot effect, 2 on defense means weak to, 2 on offensive means super-effective,
+# 0.5 on defense means resist, 0.5 on offense means not very effective
+TYPES_TABLE = { 
+  'normal': {'defense': {'ghost': 0, 'fighting': 2}, 'offense': {'ghost': 0}},
+  'fighting': {'defense': {'flying': 2, 'rock': 0.5, 'bug': 0.5, 'psychic': 2, 'dark': 0.5, 'fairy': 2}, 'offense': {'normal': 2, 'flying': 0.5, 'poison': 0.5, 'rock': 2, 'bug': 0.5, 'ghost': 0, 'steel': 2, 'psychic': 0.5, 'ice': 2, 'dark': 2, 'fairy': 0.5}},
+  'flying': {'defense': {'fighting': 0.5, 'ground': 0, 'rock': 2, 'bug': 0.5, 'grass': 0.5, 'electric': 2, 'ice': 2}, 'offense': {'fighting:': 2, 'rock': 0.5, 'bug': 2, 'steel': 0.5, 'grass': 2, 'electric': 0.5}},
+  'poison': {'defense': {'fighting': 0.5, 'poison': 0.5, 'ground': 2, 'bug': 0.5, 'grass': 0.5, 'psychic': 2, 'fairy': 0.5}, 'offense': {'poison': 0.5, 'rock': 0.5, 'ground': 0.5, 'steel': 0, 'grass': 2, 'fairy': 2}},
+  'ground': {'defense': {'poison': 2, 'rock': 0.5, 'water': 2, 'grass': 2, 'electric': 0, 'ice': 2}, 'offense': {'flying': 0, 'poison': 2, 'rock': 2, 'bug': 0.5, 'steel': 2, 'fire': 2, 'grass': 0.5, 'electric': 2}},
+  'rock': {'defense': {'normal': 0.5, 'fighting': 2, 'flying': 0.5, 'poison': 0.5, 'ground': 2, 'steel': 2, 'fire': 0.5, 'water': 2, 'grass': 2}, 'offense': {'fighting': 0.5, 'flying': 2, 'ground': 0.5, 'bug': 2, 'steel': 0.5, 'fire': 2, 'ice': 2}},
+  'bug': {'defense': {'fighting': 0.5, 'flying': 2, 'ground': 0.5, 'rock': 2, 'fire': 2, 'grass': 0.5}, 'offense': {'fighting': 0.5, 'flying': 0.5, 'poison': 0.5, 'ghost': 0.5, 'steel': 0.5, 'fire': 0.5, 'grass': 2, 'psychic': 2, 'dark': 2, 'fairy': 0.5}},
+  'ghost': {'defense': {'normal': 0, 'fighting': 0, 'poison': 0.5, 'bug': 0.5, 'ghost': 2, 'dark': 2}, 'offense': {'normal': 0, 'ghost': 2, 'psychic': 2, 'dark': 0}},
+  'steel': {'defense': {'normal': 0.5, 'fighting': 2, 'flying': 0.5, 'poison': 0, 'ground': 2, 'rock': 0.5, 'bug': 0.5, 'steel': 0.5, 'fire': 2, 'grass': 0.5, 'psychic': 0.5, 'ice': 0.5, 'dragon': 0.5, 'fairy': 0.5}, 'offense': {'rock': 2, 'steel': 0.5, 'fire': 0.5, 'water': 0.5, 'electric': 0.5, 'ice': 2, 'fairy': 2}},
+  'fire': {'defense': {'ground': 2, 'rock': 2, 'water': 2, 'bug': 0.5, 'steel': 0.5, 'ice': 0.5, 'grass': 0.5, 'fire': 0.5, 'fairy': 0.5}, 'offense': {'rock': 0.5, 'bug': 2, 'steel': 2, 'water': 0.5, 'fire': 0.5, 'grass': 2, 'ice': 2, 'dragon': 0.5}},
+  'water': {'defense': {'steel': 0.5, 'fire': 0.5, 'water': 0.5, 'electric': 2, 'grass': 2, 'ice': 0.5}, 'offense': {'ground': 2, ' rock': 2, 'fire': 2, 'water': 0.5, 'grass': 0.5, 'dragon': 0.5}},
+  'grass': {'defense': {'flying': 2, 'poison': 2, 'ground': 0.5, 'bug': 2, 'fire': 2, 'water': 0.5, 'electric': 0.5, 'grass': 0.5, 'ice': 2}, 'offense': {'flying': 0.5, 'poison': 0.5, 'ground': 2, 'rock': 2, 'bug': 0.5, 'steel': 0.5, 'fire': 0.5, 'water': 2, 'grass': 0.5, 'dragon': 0.5}},
+  'electric': {'defense': {'flying': 0.5, 'ground': 2, 'steel': 0.5, 'electric': 0.5}, 'offense': {'flying': 2, 'ground': 0, 'water': 2, 'grass': 0.5, 'electric': 0.5, 'dragon': 0.5}},
+  'psychic': {'defense': {'fighting': 0.5, 'bug': 2, 'ghost': 2, 'psychic': 0.5, 'dark': 2}, 'offense': {'fighting': 2, 'poison': 2, 'dark': 0, 'steel': 0.5, 'psychic': 0.5}},
+  'ice': {'defense': {'fighting': 2, 'rock': 2, 'steel': 2, 'fire': 2, 'ice': 0.5}, 'offense': {'flying': 2, 'ground': 2, 'steel': 0.5, 'fire': 0.5, 'water': 0.5, 'grass': 2, 'ice': 0.5, 'dragon': 2}},
+  'dragon': {'defense': {'water': 0.5, 'fire': 0.5, 'grass': 0.5, 'electric': 0.5, 'ice': 2, 'dragon': 2, 'fairy': 2}, 'offense':{'steel': 0.5, 'dragon': 2, 'fairy': 0}},
+  'dark': {'defense': {'fighting': 2, 'bug': 2, 'ghost': 0.5, 'psychic': 0, 'dark': 0.5, 'fairy': 2}, 'offense': {'fighting': 0.5, 'ghost': 2, 'psychic': 2, 'dark': 0.5, 'fairy': 0.5}},
+  'fairy': {'defense': {'fighting': 0.5, 'dark': 0.5, 'bug': 0.5, 'dragon': 0, 'steel': 2, 'poison': 2}, 'offense': {'fighting': 2, 'poison': 0.5, 'steel': 0.5, 'fire': 0.5, 'dragon': 2, 'dark': 2}}
+}
+
+class PkmnType:
+  def __init__(self, name, defense, offense):
+    self.name = name
+    self.defense = defense
+    self.offense = offense
+
+
 class Pokemon:
   def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None):
     self.name = name
@@ -71,12 +101,15 @@ class Pokemon:
       moveset_string += '- ' + move +'\n'
     moveset_string = moveset_string.strip()
 
-    return self.name + ' @ ' + self.item[0] + '\n' + 'Ability: ' + self.ability + '\n' + level_string + ev_string + '\n' + self.nature + ' Nature\n' + iv_string + '\n' + moveset_string
+    return self.name + ' @ ' + self.item + '\n' + 'Ability: ' + self.ability + '\n' + level_string + ev_string + '\n' + self.nature + ' Nature\n' + iv_string + '\n' + moveset_string
   
 class Team:
   def __init__(self, roster=None):
     self.roster = roster
-    
+
+  def _calculate_defensive_coverage(self):
+    pass
+   
 def dex_lookup(dex, pokemon_name):
   return dex[pokemon_name.lower()]
 
@@ -107,6 +140,9 @@ def calculate_pkmn_stats(dex_data, pokemon):
   }
 
   return pokemon
+
+def normalize_pokemon_name(pokemon_name):
+  return ''.join(pokemon_name.lower().split('-'))
 
 def convert_pokemondata_into_pkmn(pokemondata):
 
@@ -173,8 +209,13 @@ if __name__ == '__main__':
     pkmn_list.append(pkmn)
 
   new_team = Team(roster=pkmn_list)
-  res = dex_lookup(data, new_team.roster[0].name)
-  pkmn = calculate_pkmn_stats(res, new_team.roster[0])
-  print(pkmn.stats)
+  for pkmn in new_team.roster:
+    dex_res = dex_lookup(data, normalize_pokemon_name(pkmn.name))
+    pkmn = calculate_pkmn_stats(dex_res, pkmn)
+  
+  for pkmn in new_team.roster:
+    print(pkmn.stats)
+
+  pprint.pprint(TYPES_TABLE['steel']['defense'])
 
   dex.close()
