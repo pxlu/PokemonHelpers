@@ -7,6 +7,7 @@ import itertools
 import re
 import pprint
 import math
+import teambuilder_classes as tclass
 
 # 1: +10%, -1: -10%
 NATURES_TABLE = {
@@ -60,68 +61,9 @@ TYPES_TABLE = {
   'fairy': {'defense': {'fighting': 0.5, 'dark': 0.5, 'bug': 0.5, 'dragon': 0, 'steel': 2, 'poison': 2}, 'offense': {'fighting': 2, 'poison': 0.5, 'steel': 0.5, 'fire': 0.5, 'dragon': 2, 'dark': 2}}
 }
 
-class PkmnType:
-  def __init__(self, name, defense, offense):
-    self.name = name
-    self.defense = defense
-    self.offense = offense
-
 PKMN_TYPES = {
-  pkmn_type_name.upper(): PkmnType(name=pkmn_type_name, defense=pkmn_type_details['defense'], offense=pkmn_type_details['offense'])for (pkmn_type_name, pkmn_type_details) in TYPES_TABLE.items()
+  pkmn_type_name.upper(): tclass.PkmnType(name=pkmn_type_name, defense=pkmn_type_details['defense'], offense=pkmn_type_details['offense'])for (pkmn_type_name, pkmn_type_details) in TYPES_TABLE.items()
 }
-
-class Pokemon:
-  def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None, dex_data=None):
-    self.name = name
-    self.item = item
-    self.ability = ability
-    self.evs = evs
-    self.ivs = ivs
-    self.stats = stats
-    self.level = 100 if not level else level
-    self.nature = nature
-    self.moveset = moveset
-    self.dex_data = dex_data
-
-  def __str__(self):
-    level_string = 'Level: ' + str(self.level) + '\n' if self.level else ''
-    ev_string = 'EVs: ' 
-    for ev_stat in self.evs.keys():
-      ev_number = self.evs[ev_stat]
-      if ev_number > 0:
-        ev_string += str(ev_number) + ' ' + ev_stat + ' / '
-    if ev_string.strip()[-1] == '/':
-      ev_string = ev_string[:-2]
-    iv_string = ''
-    for k,v in self.ivs.items():
-      if v != 31:
-        if iv_string == '':
-          iv_string = 'IVs: '
-        iv_string += str(v) + ' ' + k + ' / ' 
-    if iv_string and iv_string.strip()[-1] == '/':
-      iv_string = iv_string[:-2]
-    moveset_string = ''
-    for move in self.moveset:
-      moveset_string += '- ' + move +'\n'
-    moveset_string = moveset_string.strip()
-
-    return self.name + ' @ ' + self.item + '\n' + 'Ability: ' + self.ability + '\n' + level_string + ev_string + '\n' + self.nature + ' Nature\n' + iv_string + '\n' + moveset_string
-  
-class Team:
-  def __init__(self, roster=None):
-    self.roster = roster
-
-  def _calculate_defensive_coverage(self):
-    roster_types = {}
-    for pkmn in self.roster:
-      for pkmn_type in pkmn.dex_data['types']:
-        if pkmn_type not in roster_types.keys():
-          roster_types[pkmn_type.lower()] = 1
-        else:
-          roster_types[pkmn_type.lower()] += 1
-
-    print(roster_types)
-    return roster_types
 
 def dex_lookup(dex, pokemon_name):
   return dex[pokemon_name.lower()]
@@ -195,7 +137,7 @@ def convert_pokemondata_into_pkmn(pokemondata, dex):
     if moveset_pattern_match:
       pkmn_moveset.append(moveset_pattern_match.group(0)[2:].strip())
 
-  return Pokemon(
+  return tclass.Pokemon(
     name = pkmn_name,
     item = pkmn_item,
     ability = pkmn_ability,
@@ -207,6 +149,121 @@ def convert_pokemondata_into_pkmn(pokemondata, dex):
     dex_data = dex_lookup(dex, normalize_pokemon_name(pkmn_name))
   )
 
+def calculate_role_by_type_class(pokemon, role, role_moves):
+  if any([move for move in pokemon.moveset], role_moves):
+    return [move for move in pokemon.moveset if move in role_moves]
+  return None
+
+def classify_pkmn_by_role(pokemon):
+  archetypes = {
+    'utility': [
+      'hazard_setter'
+      'hazard_control',
+      'cleric',
+      'wish',
+      'trick_room'
+      'knock_off'
+      'trick',
+      'status',
+      'healing_wish'
+      'leech_seed',
+      'screens',
+      'pivot'
+      'phazing'
+    ], 
+    'offensive': [
+      'choice_band',
+      'choice_scarf',
+      'choice_specs',
+      'setup_sweeper',
+      'priority',
+    ],
+    'defensive': [
+      'physical',
+      'special',
+      'mixed',
+      'recovery',
+    ],
+    'weather': [
+      'rain_setter',
+      'sand_setter',
+      'sun_setter',
+      'hail_setter',
+      'rain_user',
+      'sand_user',
+      'sun_user',
+      'hail_user'
+    ]
+  }
+
+  # RULES FOR CALCULATION
+  # Utility
+  # region Utility
+  utility_rules_dict = {
+    'hazards': ['spikes', 'toxic_spikes', 'stealth_rock', 'sticky_web'],
+    'hazard_control': ['defog', 'rapid_spin'],
+    'cleric': ['aromatherapy', 'heal_bell'],
+    'trick_room': True if 'trick_room' in pokemon.moveset else False,
+    'knock_off': True if 'knock_off' in pokemon.moveset else False,
+    'trick': ['trick', 'switcharoo'],
+    'status': ['sleep_powder', 'spore', 'will-o-wisp', 'thunder_wave', 'toxic', 'glare', 'stun_spore', 'zap_cannon', 'toxic_spikes', 'lovely_kiss', 'yawn', 'hypnosis'],
+    'healing_wish': ['healing_wish', 'lunar_dance'],
+    'leech_seed': True if 'leech_seed' in pokemon.moveset else False,
+    'screens': ['reflect', 'light_screen', 'aurora_veil'],
+    'phazing': ['whirlwind', 'roar', 'circle_throw', 'dragon_tail']
+  }
+  #endregion
+
+  # Offensive
+  # region Offensive
+  pivot = ['u-turn', 'volt_switch', 'parting_shot', 'flip_turn', 'teleport']
+  priority = ['fake_out', 'mach_punch', 'bullet_punch', 'ice_shard', 'sucker_punch', 'quick_attack', 'extremespeed', 'accelrock', 'shadow_sneak', 'vaccum_wave', 'water_shuriken', 'aqua_jet']
+  choice_band = True if pokemon.item == 'choice_band' else False
+  choice_scarf = True if pokemon.item == 'choice_scarf' else False
+  choice_specs = True if pokemon.item == 'choice_specs' else False
+  setup_sweeper = ['autotomize', 'belly_drum', 'bulk_up', 'calm_mind', 'dragon_dance', 'growth', 'nasty_plot', 'shell_smash', 'quiver_dance', 'shift_gear', 'agility', 'swords_dance', 'cosmic_power', 'acid_armor', 'cotton_guard', 'amnesia', 'geomancy', 'focus_energy', 'hone_claws', 'iron_defense', 'rock_polish', 'work_up', 'howl']
+  #endregion
+
+  # Defensive
+  # region Defensive
+  # Heuristics --
+  # If def >= 25% after evs = physical
+  # If spd >= 25% after evs = special
+  # If 20% < def < 25% and 20% < spd < 25% = mixed
+  physical = True if pokemon.stats['def'] >= 0.25 * sum([stat for stat in pokemon.stats.values()]) else False
+  special = True if pokemon.stats['spd'] >= 0.25 * sum([stat for stat in pokemon.stats.values()]) else False
+  mixed = True if 0.25 > pokemon.stats['def'] >= 0.20 * sum([stat for stat in pokemon.stats.values()]) and 0.25 > pokemon.stats['spd'] >= 0.20 * sum([stat for stat in pokemon.stats.values()]) else False
+  recovery = ['milk_drink', 'recover', 'roost', 'shore_up', 'synthesis', 'morning_sun', 'rest', 'strength_sap', 'soft-boiled', 'moonlight', 'heal_order', 'slack_off']
+  #endregion
+
+  # Weather
+  #region Weather
+  sun_setter = True if pokemon.ability in ['drought', 'desolate_land'] else False
+  sand_setter = True if pokemon.ability == 'sand_stream' else False
+  rain_setter = True if pokemon.ability in ['drizzle', 'primordial_sea'] else False
+  hail_setter = True if pokemon.ability == 'snow_warning' else False
+  sun_user = True if pokemon.ability in ['chlorophyll', 'flower_gift', 'forecast', 'leaf_guard', 'solar_power'] else False
+  rain_user = True if pokemon.ability in ['swift_swim', 'dry_skin', 'forecast', 'hydration', 'rain_dish'] else False
+  sand_user = True if pokemon.ability in ['sand_rush', 'sand_force'] else False
+  hail_user = True if pokemon.ability == 'slush_rush' else False
+  #endregion
+
+  roles = {
+    'utility': {},
+    'offensive': {},
+    'defensive': {},
+    'weather': {}
+  }
+
+  for util_role in archetypes['utility']:
+    calculated_util_role = calculate_role_by_type_class(pokemon, util_role, utility_rules_dict['util_role'])
+    if len(calculated_util_role) > 0:
+      roles['utility'][util_role] = calculated_util_role
+
+  #region Offensive Roles
+  roles['offensive']['utility'] = None
+  #endregion
+  
 if __name__ == '__main__':
   dex = open('pokedex.json', encoding="utf8")
   # data.keys() is a list of pokemon names
@@ -222,12 +279,14 @@ if __name__ == '__main__':
     pkmn = convert_pokemondata_into_pkmn(pokemon, data)
     pkmn_list.append(pkmn)
 
-  new_team = Team(roster=pkmn_list)
+  new_team = tclass.Team(roster=pkmn_list)
   for pkmn in new_team.roster:
     pkmn = calculate_pkmn_stats(pkmn)
   
   for pkmn in new_team.roster:
-    print(pkmn.stats)
+    print(pkmn.ability)
+    classification = classify_pkmn_by_role(pkmn)
+    print(classification)
 
   print(PKMN_TYPES['NORMAL'].defense)
   new_team._calculate_defensive_coverage()
