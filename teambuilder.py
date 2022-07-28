@@ -150,38 +150,32 @@ def convert_pokemondata_into_pkmn(pokemondata, dex):
   )
 
 def calculate_role_by_type_class(pokemon, role, role_moves):
-  if any([move for move in pokemon.moveset], role_moves):
+  if any([move in role_moves for move in role_moves]):
     return [move for move in pokemon.moveset if move in role_moves]
   return None
 
 def classify_pkmn_by_role(pokemon):
   archetypes = {
     'utility': [
-      'hazard_setter'
+      'hazard_setter',
       'hazard_control',
       'cleric',
       'wish',
-      'trick_room'
-      'knock_off'
+      'trick_room',
+      'knock_off',
       'trick',
       'status',
-      'healing_wish'
+      'healing_wish',
       'leech_seed',
       'screens',
-      'pivot'
+      'pivot',
       'phazing'
     ], 
     'offensive': [
-      'choice_band',
-      'choice_scarf',
-      'choice_specs',
       'setup_sweeper',
       'priority',
     ],
     'defensive': [
-      'physical',
-      'special',
-      'mixed',
       'recovery',
     ],
     'weather': [
@@ -200,40 +194,35 @@ def classify_pkmn_by_role(pokemon):
   # Utility
   # region Utility
   utility_rules_dict = {
-    'hazards': ['spikes', 'toxic_spikes', 'stealth_rock', 'sticky_web'],
+    'hazard_setter': ['spikes', 'toxic_spikes', 'stealth_rock', 'sticky_web'],
     'hazard_control': ['defog', 'rapid_spin'],
     'cleric': ['aromatherapy', 'heal_bell'],
-    'trick_room': True if 'trick_room' in pokemon.moveset else False,
-    'knock_off': True if 'knock_off' in pokemon.moveset else False,
+    'wish': ['wish'],
+    'trick_room': ['trick_room'],
+    'knock_off': ['knock_off'],
     'trick': ['trick', 'switcharoo'],
     'status': ['sleep_powder', 'spore', 'will-o-wisp', 'thunder_wave', 'toxic', 'glare', 'stun_spore', 'zap_cannon', 'toxic_spikes', 'lovely_kiss', 'yawn', 'hypnosis'],
     'healing_wish': ['healing_wish', 'lunar_dance'],
-    'leech_seed': True if 'leech_seed' in pokemon.moveset else False,
+    'leech_seed': ['leech_seed'],
     'screens': ['reflect', 'light_screen', 'aurora_veil'],
+    'pivot': ['u-turn', 'parting_shot', 'volt_switch', 'flip_turn', 'teleport'],
     'phazing': ['whirlwind', 'roar', 'circle_throw', 'dragon_tail']
   }
   #endregion
 
   # Offensive
   # region Offensive
-  pivot = ['u-turn', 'volt_switch', 'parting_shot', 'flip_turn', 'teleport']
-  priority = ['fake_out', 'mach_punch', 'bullet_punch', 'ice_shard', 'sucker_punch', 'quick_attack', 'extremespeed', 'accelrock', 'shadow_sneak', 'vaccum_wave', 'water_shuriken', 'aqua_jet']
-  choice_band = True if pokemon.item == 'choice_band' else False
-  choice_scarf = True if pokemon.item == 'choice_scarf' else False
-  choice_specs = True if pokemon.item == 'choice_specs' else False
-  setup_sweeper = ['autotomize', 'belly_drum', 'bulk_up', 'calm_mind', 'dragon_dance', 'growth', 'nasty_plot', 'shell_smash', 'quiver_dance', 'shift_gear', 'agility', 'swords_dance', 'cosmic_power', 'acid_armor', 'cotton_guard', 'amnesia', 'geomancy', 'focus_energy', 'hone_claws', 'iron_defense', 'rock_polish', 'work_up', 'howl']
+  offensive_rules_dict = {
+    'priority': ['fake_out', 'mach_punch', 'bullet_punch', 'ice_shard', 'sucker_punch', 'quick_attack', 'extremespeed', 'accelrock', 'shadow_sneak', 'vaccum_wave', 'water_shuriken', 'aqua_jet'],
+    'setup_sweeper': ['autotomize', 'belly_drum', 'bulk_up', 'calm_mind', 'dragon_dance', 'growth', 'nasty_plot', 'shell_smash', 'quiver_dance', 'shift_gear', 'agility', 'swords_dance', 'cosmic_power', 'acid_armor', 'cotton_guard', 'amnesia', 'geomancy', 'focus_energy', 'hone_claws', 'iron_defense', 'rock_polish', 'work_up', 'howl']
+  }
   #endregion
 
   # Defensive
   # region Defensive
-  # Heuristics --
-  # If def >= 25% after evs = physical
-  # If spd >= 25% after evs = special
-  # If 20% < def < 25% and 20% < spd < 25% = mixed
-  physical = True if pokemon.stats['def'] >= 0.25 * sum([stat for stat in pokemon.stats.values()]) else False
-  special = True if pokemon.stats['spd'] >= 0.25 * sum([stat for stat in pokemon.stats.values()]) else False
-  mixed = True if 0.25 > pokemon.stats['def'] >= 0.20 * sum([stat for stat in pokemon.stats.values()]) and 0.25 > pokemon.stats['spd'] >= 0.20 * sum([stat for stat in pokemon.stats.values()]) else False
-  recovery = ['milk_drink', 'recover', 'roost', 'shore_up', 'synthesis', 'morning_sun', 'rest', 'strength_sap', 'soft-boiled', 'moonlight', 'heal_order', 'slack_off']
+  defensive_roles_dict = {
+    'recovery': ['milk_drink', 'recover', 'roost', 'shore_up', 'synthesis', 'morning_sun', 'rest', 'strength_sap', 'soft-boiled', 'moonlight', 'heal_order', 'slack_off']
+  }
   #endregion
 
   # Weather
@@ -256,13 +245,57 @@ def classify_pkmn_by_role(pokemon):
   }
 
   for util_role in archetypes['utility']:
-    calculated_util_role = calculate_role_by_type_class(pokemon, util_role, utility_rules_dict['util_role'])
+    calculated_util_role = calculate_role_by_type_class(pokemon, util_role, utility_rules_dict[util_role])
     if len(calculated_util_role) > 0:
       roles['utility'][util_role] = calculated_util_role
 
-  #region Offensive Roles
-  roles['offensive']['utility'] = None
-  #endregion
+  for offensive_role in archetypes['offensive']:
+    calculated_offensive_role = calculate_role_by_type_class(pokemon, offensive_role, offensive_rules_dict[offensive_role])
+    if len(calculated_offensive_role) > 0:
+      roles['offensive'][offensive_role] = calculated_offensive_role
+
+  for defensive_role in archetypes['defensive']:
+    calculated_defensive_role = calculate_role_by_type_class(pokemon, defensive_roles_dict, defensive_roles_dict[defensive_role])
+    if len(calculated_defensive_role) > 0:
+      roles['defensive'][defensive_role] = calculated_defensive_role
+
+  if pokemon.item == 'choice_band':
+    roles['offensive']['choice_band'] = True
+  elif pokemon.item == 'choice_specs':
+    roles['offensive']['choice_specs'] = True
+  elif pokemon.item == 'choice_scarf':
+    roles['offensive']['choice_scarf'] = True
+
+  # Heuristics --
+  # If def >= 25% after evs = physical
+  # If spd >= 25% after evs = special
+  # If 20% < def < 25% and 20% < spd < 25% = mixed
+  if 0.22 > pokemon.stats['def'] >= 0.18 * sum([stat for stat in pokemon.stats.values()]) and 0.22 > pokemon.stats['spd'] >= 0.18 * sum([stat for stat in pokemon.stats.values()]):
+    roles['defensive']['mixed'] = True
+  else:
+    if pokemon.stats['def'] >= 0.22 * sum([stat for stat in pokemon.stats.values()]):
+      roles['defensive']['physical'] = True
+    if pokemon.stats['spd'] >= 0.22 * sum([stat for stat in pokemon.stats.values()]):
+      roles['defensive']['special'] = True
+
+  if rain_setter:
+    roles['weather']['rain_setter'] = True
+  if rain_user:
+    roles['weather']['rain_user'] = True
+  if sun_setter:
+    roles['weather']['sun_setter'] = True
+  if sun_user:
+    roles['weather']['sun_user'] = True
+  if sand_setter:
+    roles['weather']['sand_setter'] = True
+  if sand_user:
+    roles['weather']['sand_user'] = True
+  if hail_setter:
+    roles['weather']['hail_setter'] = True
+  if hail_user:
+    roles['weather']['hail_user'] = True
+
+  return roles
   
 if __name__ == '__main__':
   dex = open('pokedex.json', encoding="utf8")
@@ -284,9 +317,9 @@ if __name__ == '__main__':
     pkmn = calculate_pkmn_stats(pkmn)
   
   for pkmn in new_team.roster:
-    print(pkmn.ability)
+    # print(pkmn.ability)
     classification = classify_pkmn_by_role(pkmn)
-    print(classification)
+    pprint.pprint(classification)
 
   print(PKMN_TYPES['NORMAL'].defense)
   new_team._calculate_defensive_coverage()
