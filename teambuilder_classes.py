@@ -61,5 +61,4 @@ class Team:
         else:
           roster_types[pkmn_type.lower()] += 1
 
-    print(roster_types)
     return roster_types

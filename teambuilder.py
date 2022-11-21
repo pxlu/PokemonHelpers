@@ -190,9 +190,7 @@ def classify_pkmn_by_role(pokemon):
     ]
   }
 
-  # RULES FOR CALCULATION
-  # Utility
-  # region Utility
+  #region Utility
   utility_rules_dict = {
     'hazard_setter': ['spikes', 'toxic_spikes', 'stealth_rock', 'sticky_web'],
     'hazard_control': ['defog', 'rapid_spin'],
@@ -210,22 +208,19 @@ def classify_pkmn_by_role(pokemon):
   }
   #endregion
 
-  # Offensive
-  # region Offensive
+  #region Offensive
   offensive_rules_dict = {
     'priority': ['fake_out', 'mach_punch', 'bullet_punch', 'ice_shard', 'sucker_punch', 'quick_attack', 'extremespeed', 'accelrock', 'shadow_sneak', 'vaccum_wave', 'water_shuriken', 'aqua_jet'],
     'setup_sweeper': ['autotomize', 'belly_drum', 'bulk_up', 'calm_mind', 'dragon_dance', 'growth', 'nasty_plot', 'shell_smash', 'quiver_dance', 'shift_gear', 'agility', 'swords_dance', 'cosmic_power', 'acid_armor', 'cotton_guard', 'amnesia', 'geomancy', 'focus_energy', 'hone_claws', 'iron_defense', 'rock_polish', 'work_up', 'howl']
   }
   #endregion
 
-  # Defensive
-  # region Defensive
+  #region Defensive
   defensive_roles_dict = {
     'recovery': ['milk_drink', 'recover', 'roost', 'shore_up', 'synthesis', 'morning_sun', 'rest', 'strength_sap', 'soft-boiled', 'moonlight', 'heal_order', 'slack_off']
   }
   #endregion
 
-  # Weather
   #region Weather
   sun_setter = True if pokemon.ability in ['drought', 'desolate_land'] else False
   sand_setter = True if pokemon.ability == 'sand_stream' else False
@@ -238,10 +233,12 @@ def classify_pkmn_by_role(pokemon):
   #endregion
 
   roles = {
-    'utility': {},
-    'offensive': {},
-    'defensive': {},
-    'weather': {}
+    pokemon.name : {
+      'utility': {},
+      'offensive': {},
+      'defensive': {},
+      'weather': {}
+    }
   }
 
   for util_role in archetypes['utility']:
@@ -315,9 +312,6 @@ if __name__ == '__main__':
   new_team = tclass.Team(roster=pkmn_list)
   for pkmn in new_team.roster:
     pkmn = calculate_pkmn_stats(pkmn)
-  
-  for pkmn in new_team.roster:
-    # print(pkmn.ability)
     classification = classify_pkmn_by_role(pkmn)
     pprint.pprint(classification)
 

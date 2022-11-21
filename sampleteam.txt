@@ -1,58 +1,57 @@
-Sharpedo (F) @ Life Orb  
-Ability: Speed Boost  
-Shiny: Yes  
-EVs: 252 Atk / 4 SpD / 252 Spe  
-Adamant Nature 
-- Waterfall  
-- Crunch  
-- Close Combat  
-- Protect
-
-Weezing-Galar @ Rocky Helmet  
-Ability: Levitate  
-EVs: 252 HP / 252 Def / 4 Spe  
+Miltank @ Leftovers  
+Ability: Thick Fat  
+EVs: 252 HP / 252 Def / 4 SpD  
 Bold Nature  
-IVs: 0 Atk / 19 Def / 24 SpA 
-- Sludge Bomb  
-- Pain Split  
-- Will-O-Wisp  
-- Defog  
-
-Metagross @ Leftovers  
-Ability: Clear Body  
-EVs: 252 HP / 248 SpD / 8 Spe  
-Careful Nature  
-- Meteor Mash  
-- Body Press  
-- Cosmic Power  
-- Rest  
-
-Umbreon @ Leftovers  
-Ability: Synchronize  
-EVs: 252 HP / 4 Def / 252 SpD  
-Calm Nature  
 IVs: 0 Atk  
-- Wish  
-- Protect  
-- Foul Play  
+- Milk Drink  
+- Seismic Toss  
+- Toxic  
 - Heal Bell  
 
-Nidoqueen (F) @ Black Sludge  
-Ability: Sheer Force  
-EVs: 252 HP / 32 SpA / 224 SpD  
+Gourgeist-Super (F) @ Colbur Berry  
+Ability: Frisk  
+EVs: 252 HP / 252 Def / 4 SpD  
+Impish Nature  
+IVs: 0 Atk  
+- Synthesis  
+- Foul Play  
+- Toxic  
+- Leech Seed  
+
+Altaria (F) @ Heavy-Duty Boots  
+Ability: Natural Cure  
+Shiny: Yes  
+EVs: 252 HP / 252 SpD / 4 Spe  
 Calm Nature  
 IVs: 0 Atk  
-- Stealth Rock  
-- Toxic  
-- Earth Power  
-- Ice Beam  
-
-Togekiss @ Choice Scarf  
-Ability: Serene Grace  
-EVs: 80 HP / 44 Def / 132 SpA / 252 Spe  
-Timid Nature  
-IVs: 0 Atk  
-- Air Slash  
-- Flamethrower  
-- Trick  
+- Fire Spin  
+- Perish Song  
 - Roost  
+- Defog  
+
+Liepard (F) @ Choice Band  
+Ability: Prankster  
+EVs: 252 Atk / 4 Def / 252 Spe  
+Jolly Nature  
+- Knock Off  
+- U-turn  
+- Trick  
+- Gunk Shot  
+
+Dugtrio-Alola @ Focus Sash  
+Ability: Tangling Hair  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Jolly Nature  
+- Stealth Rock  
+- Stone Edge  
+- Earthquake  
+- Iron Head  
+
+Kangaskhan @ Silk Scarf  
+Ability: Scrappy  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Jolly Nature  
+- Fake Out  
+- Double-Edge  
+- Sucker Punch  
+- Earthquake
