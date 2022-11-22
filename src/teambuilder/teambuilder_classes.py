@@ -1,9 +1,5 @@
 
 import json
-import itertools
-import re
-import pprint
-import math
 
 class PkmnType:
   def __init__(self, name, defense, offense):
@@ -14,15 +10,29 @@ class PkmnType:
 class Pokemon:
   def __init__(self, name=None, item=None, ability=None, evs=None, ivs=None, stats=None, level=None, nature=None, moveset=None, dex_data=None):
     self.name = name
-    self.item = item.strip().lower().replace(' ', '_')
-    self.ability = ability.strip().lower().replace(' ', '_')
+    self.item = item.strip().lower().replace(' ', '_') if item else None
+    self.ability = ability.strip().lower().replace(' ', '_') if ability else None
     self.evs = evs
     self.ivs = ivs
     self.stats = stats
     self.level = 100 if not level else level
     self.nature = nature
-    self.moveset = [move.strip().lower().replace(' ', '_') for move in moveset]
+    self.moveset = [move.strip().lower().replace(' ', '_') for move in moveset] if moveset else None
     self.dex_data = dex_data
+
+  def toJSON(self):
+    return {
+      'Name': self.name,
+      'Item': self.item,
+      'Ability': self.ability,
+      'EVs': self.evs,
+      'IVs': self.ivs,
+      'Stats': self.stats,
+      'Level': self.level,
+      'Nature': self.nature,
+      'Moveset': self.moveset,
+      'DexData': self.dex_data
+    }
 
   def __str__(self):
     level_string = 'Level: ' + str(self.level) + '\n' if self.level else ''

@@ -4,10 +4,12 @@
 
 import json
 import itertools
+import os
 import re
 import pprint
+import glob
 import math
-import teambuilder_classes as tclass
+from . import teambuilder_classes as tclass
 
 # 1: +10%, -1: -10%
 NATURES_TABLE = {
@@ -263,13 +265,14 @@ def classify_pkmn_by_role(pokemon):
   #region Offensive Roles
   roles['offensive']['utility'] = None
   #endregion
-  
-if __name__ == '__main__':
-  dex = open('pokedex.json', encoding="utf8")
+
+def load_teamdata(team='sampleteam.txt'):
+  print(os.getcwd())
+  dex = open('../teambuilder/pokedex.json', encoding="utf8")
   # data.keys() is a list of pokemon names
   data = json.load(dex)
   
-  sample_team = open('sampleteam.txt', encoding="utf8").readlines()
+  sample_team = open('../teambuilder/sampleteam.txt', encoding="utf8").readlines()
   delimiter = '\n'
   # https://stackoverflow.com/questions/15357830/splitting-a-list-based-on-a-delimiter-word
   list_of_pokemon_data = [list(y) for x, y in itertools.groupby(sample_team, lambda z: z == delimiter) if not x]
@@ -278,6 +281,11 @@ if __name__ == '__main__':
   for pokemon in list_of_pokemon_data:
     pkmn = convert_pokemondata_into_pkmn(pokemon, data)
     pkmn_list.append(pkmn)
+
+  return (pkmn_list, dex)
+
+if __name__ == '__main__':
+  (pkmn_list, dex) = load_teamdata()
 
   new_team = tclass.Team(roster=pkmn_list)
   for pkmn in new_team.roster:
