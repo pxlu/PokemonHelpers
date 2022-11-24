@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 from ..teambuilder.teambuilder_classes import Team, Pokemon
 from ..teambuilder.teambuilder import load_teamdata
 
-
 app = Flask(__name__)
 
 @app.route("/")
@@ -10,6 +9,11 @@ def hello_world():
     data, dex = load_teamdata()
     new_team = Team(roster=data)
     return jsonify(new_team.roster[0].toJSON())
+
+@app.route("/last_played")
+def last_played():
+    match_data = None
+    return match_data
 
 @app.route("/about")
 def about_page():

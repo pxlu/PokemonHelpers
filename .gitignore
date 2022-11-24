@@ -2,3 +2,7 @@
 src/routing/.python-version
 routing/.python-version
 routing/.python-version
+*.pyc
+*.pyc
+src/api/.python-version
+*/.python-version
