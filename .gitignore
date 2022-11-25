@@ -6,3 +6,4 @@ routing/.python-version
 *.pyc
 src/api/.python-version
 */.python-version
+database.ini
