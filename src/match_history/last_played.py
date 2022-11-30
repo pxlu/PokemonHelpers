@@ -6,11 +6,10 @@ import os
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
-print(sys.path)
 
 from common.db_config import config
 
-def load_teamdata_from_match():
+def connect_to_db():
     # read connection parameters
     params = config()
 
@@ -30,7 +29,25 @@ def load_teamdata_from_match():
     print(db_version)
 
     # close the communication with the PostgreSQL
-    cur.close()
+    # cur.close()
+
+    return cur
+
+def load_teamdata_from_match(db_cursor, player_1_name, player_2_name):
+
+  """
+  First, get the match_id from match_history
+  Then, match that match_id with the match_id from the match_history_teams table
+  Then, for each pokemon for both players, get all known moves, items and abilities, shininess, level, gender for each pokemon
+    For your own team's pokemon, also get the EVs and IVs for each pokemon
+
+  """
+  SQL = '''
+    SELECT * FROM match_history
+    WHERE player1 
+  '''
+
+  return None
 
 
 def last_played():
