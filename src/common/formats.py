@@ -1,6 +1,5 @@
 import json
 
-
 def generate_format_json():
 
     formats = {}

@@ -1,4 +1,3 @@
-import psycopg2
 from datetime import datetime
 import json
 import sys
@@ -8,30 +7,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 print(sys.path)
 
-from common.db_config import config
-
 def load_teamdata_from_match():
-    # read connection parameters
-    params = config()
-
-    # connect to the PostgreSQL server
-    print('Connecting to the PostgreSQL database...')
-    conn = psycopg2.connect(**params)
-
-    # create a cursor
-    cur = conn.cursor()
-
-    # execute a statement
-    print('PostgreSQL database version:')
-    cur.execute('SELECT version()')
-
-    # display the PostgreSQL database server version
-    db_version = cur.fetchone()
-    print(db_version)
-
-    # close the communication with the PostgreSQL
-    cur.close()
-
+    return None
 
 def last_played():
 
@@ -60,7 +37,6 @@ def last_played():
     }
 
     return None
-
 
 if __name__ == '__main__':
     load_teamdata_from_match()
